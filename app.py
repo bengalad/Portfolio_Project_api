@@ -157,19 +157,6 @@ def get_historical_prices(ticker):
         return hist.to_json()
     else:
         return jsonify({"Error":"Ticker data not found"}), 404
-    
-# [('AMAZ',), ('GOOG',), ('EUR',)]
-@app.route('/refresh', methods=['GET'])
-def refreshData():
-    cursor = db.cursor()
-    query = "SELECT ticker FROM holdings"
-    cursor.execute(query)
-    tickers = cursor.fetchall()
-    for i in tickers:
-        ticker = i[0]
-        info = yf.Ticker(ticker)
-        
-        
         
 # Endpoint to update an existing bond
 @app.route('/bonds/<id>', methods=['PUT'])
@@ -242,7 +229,46 @@ def update_cash(id):
     return jsonify({'message': 'Cash updated successfully'})
 
 
-
+@app.route('/refresh', methods=['GET'])
+def refreshData():
+    # get tickers from the holdings table 
+    cursor = db.cursor()
+    query = "SELECT ticker FROM holdings"
+    cursor.execute(query)
+    tickers = cursor.fetchall()
+    cursor.close()
+    # tickers = ["MSFT"]
+    for i in tickers:
+        print("hello")
+        # get information for this product from yahoo
+        ticker = i[0]
+        tick = yf.Ticker(ticker)
+        info = tick.info
+        # return jsonify(info)
+        print(info)
+        price = info['currentPrice']
+        
+        # get the product information from the database using the ticker
+        cursor = db.cursor()
+        query = "SELECT * FROM holdings WHERE ticker = %s";
+        cursor.execute(query, (ticker,))
+        product = cursor.fetchall()[0]
+        # # updating the price in the specific product table 
+        if product[2] == "stock":
+            stockQuery = "UPDATE stocks SET currentPrice = %s WHERE id = %s"
+            cursor.execute(stockQuery, (price, product[0])) 
+            db.commit()
+        elif product[2] == "bond":
+            bondQuery = "UPDATE bonds SET currentPrice = %s WHERE id = %s"
+            cursor.execute(bondQuery, (price, product[0])) 
+            db.commit()
+        elif product[2] == "cash":
+            cashQuery = "UPDATE cash SET currentValue = %s WHERE id = %s"
+            cursor.execute(cashQuery, (price, product[0]))
+            db.commit()
+        cursor.close()
+            
 if __name__ == '__main__':
+    app.debug = True
     app.run()
     
