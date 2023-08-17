@@ -215,8 +215,6 @@ def get_historical_prices(ticker):
         return hist.to_json()
     else:
         return jsonify({"Error":"Ticker data not found"}), 404
-<<<<<<< HEAD
-=======
     
 # [('AMAZ',), ('GOOG',), ('EUR',)]
 @app.route('/refresh', methods=['GET'])
@@ -259,8 +257,6 @@ def delete_cash(item_id):
     cursor.close()
     return jsonify({"Message":"Cash item deleted successfully"})
         
-        
->>>>>>> d9cdacd85559b8c0d3c6ea57e4a46cbda6c81205
         
 # Endpoint to update an existing bond
 @app.route('/bonds/<id>', methods=['PUT'])
