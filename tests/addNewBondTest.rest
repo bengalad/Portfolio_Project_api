@@ -1,0 +1,16 @@
+POST http://localhost:5000/bonds
+   Content-Type: application/json
+
+   {
+       "id": "21", 
+        "holdingName": "New Bond",
+       "dateOfPurchase": "2023-01-03",
+       "priceAtPurchase":9.99,
+       "qty": 10,
+       "currentPrice": 10.99,
+       "parValue": 10.99,
+       "currentPrice": 100
+
+       
+   }
+   

@@ -1,0 +1,13 @@
+POST http://localhost:5000/stocks
+   Content-Type: application/json
+
+   {
+       "id": "20", 
+        "holdingName": "New Artist",
+       "dateOfPurchase": "2023-01-02",
+       "priceAtPurchase":9.99,
+       "qty": 10,
+       "currentPrice": 10.99
+       
+   }
+   

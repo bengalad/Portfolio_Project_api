@@ -69,8 +69,6 @@ def getinitialvalue():
     products = cursor.fetchall()
     cursor.close()
     return jsonify(products)
-
-@app.route('/products', methods=['GET'])
 def getAllProducts():
     cursor = db.cursor()
     query = """SELECT id, holdingName, dateOfPurchase, priceAtPurchase, currentPrice, qty FROM stocks UNION 
@@ -78,7 +76,6 @@ def getAllProducts():
     SELECT id, holdingName, dateOfPurchase, exchAtPurchase*qty AS priceAtPurchase, currentValue, qty FROM cash"""
     cursor.execute(query)
     allProducts = cursor.fetchall()
-    cursor.close()
     return jsonify(allProducts)
 
 @app.route('/products/<string:ticker>', methods=['GET'])
@@ -94,19 +91,7 @@ def get_historical_prices(ticker):
         return hist.to_json()
     else:
         return jsonify({"Error":"Ticker data not found"}), 404
-    
-# [('AMAZ',), ('GOOG',), ('EUR',)]
-@app.route('/refresh', methods=['GET'])
-def refreshData():
-    cursor = db.cursor()
-    query = "SELECT ticker FROM holdings"
-    cursor.execute(query)
-    tickers = cursor.fetchall()
-    for i in tickers:
-        ticker = i[0]
-        info = yf.Ticker(ticker)
 
 if __name__ == '__main__':
-    app.debug = True
     app.run()
     
