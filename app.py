@@ -14,6 +14,63 @@ db = mysql.connector.connect(
 # Endpoint to create a new stock
 @app.route('/stocks', methods=['POST'])
 def create_stock():
+    id = request.json['id']
+    holdingName = request.json['holdingName']
+    dateOfPurchase = request.json['dateOfPurchase']
+    priceAtPurchase = request.json['priceAtPurchase']
+    qty = request.json['qty']
+    currentPrice = request.json['currentPrice']
+    parValue = request.json['parValue']     
+    maturityDate = request.json['maturityDate']
+
+    cursor = db.cursor()
+   
+    cursor.execute("INSERT INTO stocks (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice, parValue, maturityDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate))
+    db.commit()
+    cursor.close()
+    return jsonify({'message': 'Bond added successfully'})
+
+
+# Endpoint to create a new bond
+@app.route('/bonds', methods=['POST'])
+def create_bond():
+    id = request.json['id']
+    holdingName = request.json['holdingName']
+    dateOfPurchase = request.json['dateOfPurchase']
+    priceAtPurchase = request.json['priceAtPurchase']
+    qty = request.json['qty']
+    currentPrice = request.json['currentPrice']
+
+    cursor = db.cursor()
+   
+    cursor.execute("INSERT INTO bonds (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice) VALUES (%s, %s, %s, %s, %s, %s)",
+                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice))
+    db.commit()
+    cursor.close()
+    return jsonify({'message': 'Bond added successfully'})
+
+
+# Endpoint to create a new cash
+@app.route('/cash', methods=['POST'])
+def create_cash():
+    id = request.json['id']
+    holdingName = request.json['holdingName']
+    dateOfPurchase = request.json['dateOfPurchase']
+    exchAtPurchase = request.json['exchAtPurchase']
+    qty = request.json['qty']
+    exchCurrent = request.json['exchCurrent']
+    currentValue = request.json['currentValue']
+    
+
+    cursor = db.cursor()
+   
+    cursor.execute("INSERT INTO cash (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                   (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue))
+    db.commit()
+    cursor.close()
+    return jsonify({'message': 'Cash added successfully'})
+
     
     id = request.json['id']
     holdingName = request.json['holdingName']
@@ -142,6 +199,7 @@ def getAllProducts():
     SELECT id, holdingName, dateOfPurchase, exchAtPurchase*qty AS priceAtPurchase, currentValue, qty FROM cash"""
     cursor.execute(query)
     allProducts = cursor.fetchall()
+    cursor.close()
     return jsonify(allProducts)
 
 @app.route('/products/<string:ticker>', methods=['GET'])
@@ -157,6 +215,52 @@ def get_historical_prices(ticker):
         return hist.to_json()
     else:
         return jsonify({"Error":"Ticker data not found"}), 404
+<<<<<<< HEAD
+=======
+    
+# [('AMAZ',), ('GOOG',), ('EUR',)]
+@app.route('/refresh', methods=['GET'])
+def refreshData():
+    cursor = db.cursor()
+    query = "SELECT ticker FROM holdings"
+    cursor.execute(query)
+    tickers = cursor.fetchall()
+    for i in tickers:
+        ticker = i[0]
+        info = yf.Ticker(ticker)
+
+@app.route('/products/stocks/<int:item_id>', methods=['DELETE'])
+def delete_stocks(item_id):
+    
+    cursor = db.cursor(buffered=True)
+    cursor.execute("DELETE FROM stocks WHERE id=%s",
+                   (item_id,))
+    db.commit()
+    cursor.close()
+    return jsonify({"Message":"Stocks item deleted successfully"})
+
+@app.route('/products/bonds/<int:item_id>', methods=['DELETE'])
+def delete_bonds(item_id):
+    
+    cursor = db.cursor(buffered=True)
+    cursor.execute("DELETE FROM bonds WHERE id=%s",
+                   (item_id,))
+    db.commit()
+    cursor.close()
+    return jsonify({"Message":"Bonds item deleted successfully"})
+
+@app.route('/products/cash/<int:item_id>', methods=['DELETE'])
+def delete_cash(item_id):
+    
+    cursor = db.cursor(buffered=True)
+    cursor.execute("DELETE FROM cash WHERE id=%s",
+                   (item_id,))
+    db.commit()
+    cursor.close()
+    return jsonify({"Message":"Cash item deleted successfully"})
+        
+        
+>>>>>>> d9cdacd85559b8c0d3c6ea57e4a46cbda6c81205
         
 # Endpoint to update an existing bond
 @app.route('/bonds/<id>', methods=['PUT'])
