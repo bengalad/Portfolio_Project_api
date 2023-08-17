@@ -10,7 +10,6 @@ db = mysql.connector.connect(
     password="c0nygre",
     database="portfolio"
 )
-<<<<<<< HEAD
 
 # Endpoint to create a new stock
 @app.route('/stocks', methods=['POST'])
@@ -75,9 +74,7 @@ def create_cash():
     cursor.close()
     return jsonify({'message': 'Cash added successfully'})
 
-=======
->>>>>>> 2b4b8ca2d17545bbaced23f58263657bdc7545c0
-    
+ 
 @app.route('/products/totalvalue', methods=['GET'])
 def gettotalvalue():
     # Calculates the current total value of the portfolio
@@ -158,7 +155,6 @@ def get_historical_prices(ticker):
         return hist.to_json()
     else:
         return jsonify({"Error":"Ticker data not found"}), 404
-<<<<<<< HEAD
     
 # [('AMAZ',), ('GOOG',), ('EUR',)]
 @app.route('/refresh', methods=['GET'])
@@ -244,8 +240,6 @@ def update_cash(id):
     return jsonify({'message': 'Cash updated successfully'})
 
 
-=======
->>>>>>> 2b4b8ca2d17545bbaced23f58263657bdc7545c0
 
 if __name__ == '__main__':
     app.run()
