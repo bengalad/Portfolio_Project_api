@@ -74,5 +74,14 @@ insert cash
    values('9', 'Cash3', '2023-8-05', 7.99,
    6.99, 100);
    
+   
+   
+insert holdings
+   values('9', 'Cash3', 'cash');
+insert holdings
+   values('1', 'Stock1', 'stock');
+   insert holdings
+   values('4', 'Bond1', 'bond');
+   
 
 
