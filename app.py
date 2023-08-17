@@ -10,9 +10,36 @@ db = mysql.connector.connect(
     password="c0nygre",
     database="portfolio"
 )
+    
+@app.route('/products/totalvalue', methods=['GET'])
+def gettotalvalue():
+    # Calculates the current total value of the portfolio
+    cursor = db.cursor()
+    cursor.execute('''SELECT SUM(qty*price) as totalValue FROM
+                        (SELECT cash.id, cash.qty, cash.currentValue AS price FROM cash
+                        UNION
+                        SELECT bonds.id, bonds.qty, bonds.currentPrice AS price FROM bonds
+                        UNION
+                        SELECT stocks.id, stocks.qty, stocks.currentPrice AS price FROM stocks) as combinedTable''')
+    products = cursor.fetchall()
+    cursor.close()
+    return jsonify(products)
 
-# Gets a table of all stocks, bonds and cash showing ID, Name, Date of purchase, 
-# price at purchase, current value and quantity 
+
+@app.route('/products/initialvalue', methods=['GET'])
+def getinitialvalue():
+    # Calculates the current total value of the portfolio
+    cursor = db.cursor()
+    cursor.execute('''SELECT SUM(qty*price) as initialValue FROM
+                        (SELECT cash.id, cash.qty, cash.exchAtPurchase AS price FROM cash
+                        UNION
+                        SELECT bonds.id, bonds.qty, bonds.priceAtPurchase AS price FROM bonds
+                        UNION
+                        SELECT stocks.id, stocks.qty, stocks.priceAtPurchase AS price FROM stocks) as combinedTable''')
+    products = cursor.fetchall()
+    cursor.close()
+    return jsonify(products)
+
 @app.route('/products', methods=['GET'])
 def getAllProducts():
     cursor = db.cursor()
