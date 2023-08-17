@@ -11,7 +11,7 @@ db = mysql.connector.connect(
     database="portfolio"
 )
     
-@app.route('/products', methods=['GET'])
+@app.route('/products/totalvalue', methods=['GET'])
 def gettotalvalue():
     # Calculates the current total value of the portfolio
     cursor = db.cursor()
@@ -26,7 +26,7 @@ def gettotalvalue():
     return jsonify(products)
 
 
-@app.route('/products', methods=['GET'])
+@app.route('/products/initialvalue', methods=['GET'])
 def getinitialvalue():
     # Calculates the current total value of the portfolio
     cursor = db.cursor()
