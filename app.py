@@ -10,67 +10,6 @@ db = mysql.connector.connect(
     password="c0nygre",
     database="portfolio"
 )
-
-# Endpoint to create a new stock
-@app.route('/stocks', methods=['POST'])
-def create_stock():
-    id = request.json['id']
-    holdingName = request.json['holdingName']
-    dateOfPurchase = request.json['dateOfPurchase']
-    priceAtPurchase = request.json['priceAtPurchase']
-    qty = request.json['qty']
-    currentPrice = request.json['currentPrice']
-    parValue = request.json['parValue']     
-    maturityDate = request.json['maturityDate']
-
-    cursor = db.cursor()
-   
-    cursor.execute("INSERT INTO stocks (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice, parValue, maturityDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate))
-    db.commit()
-    cursor.close()
-    return jsonify({'message': 'Bond added successfully'})
-
-
-# Endpoint to create a new bond
-@app.route('/bonds', methods=['POST'])
-def create_bond():
-    id = request.json['id']
-    holdingName = request.json['holdingName']
-    dateOfPurchase = request.json['dateOfPurchase']
-    priceAtPurchase = request.json['priceAtPurchase']
-    qty = request.json['qty']
-    currentPrice = request.json['currentPrice']
-
-    cursor = db.cursor()
-   
-    cursor.execute("INSERT INTO bonds (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice) VALUES (%s, %s, %s, %s, %s, %s)",
-                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice))
-    db.commit()
-    cursor.close()
-    return jsonify({'message': 'Bond added successfully'})
-
-
-# Endpoint to create a new cash
-@app.route('/cash', methods=['POST'])
-def create_cash():
-    id = request.json['id']
-    holdingName = request.json['holdingName']
-    dateOfPurchase = request.json['dateOfPurchase']
-    exchAtPurchase = request.json['exchAtPurchase']
-    qty = request.json['qty']
-    exchCurrent = request.json['exchCurrent']
-    currentValue = request.json['currentValue']
-    
-
-    cursor = db.cursor()
-   
-    cursor.execute("INSERT INTO cash (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                   (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue))
-    db.commit()
-    cursor.close()
-    return jsonify({'message': 'Cash added successfully'})
-
     
 @app.route('/products/totalvalue', methods=['GET'])
 def gettotalvalue():
@@ -100,8 +39,6 @@ def getinitialvalue():
     products = cursor.fetchall()
     cursor.close()
     return jsonify(products)
-
-@app.route('/products', methods=['GET'])
 def getAllProducts():
     cursor = db.cursor()
     query = """SELECT id, holdingName, dateOfPurchase, priceAtPurchase, currentPrice, qty FROM stocks UNION 
@@ -109,7 +46,6 @@ def getAllProducts():
     SELECT id, holdingName, dateOfPurchase, exchAtPurchase*qty AS priceAtPurchase, currentValue, qty FROM cash"""
     cursor.execute(query)
     allProducts = cursor.fetchall()
-    cursor.close()
     return jsonify(allProducts)
 
 @app.route('/products/<string:ticker>', methods=['GET'])
@@ -125,19 +61,7 @@ def get_historical_prices(ticker):
         return hist.to_json()
     else:
         return jsonify({"Error":"Ticker data not found"}), 404
-    
-# [('AMAZ',), ('GOOG',), ('EUR',)]
-@app.route('/refresh', methods=['GET'])
-def refreshData():
-    cursor = db.cursor()
-    query = "SELECT ticker FROM holdings"
-    cursor.execute(query)
-    tickers = cursor.fetchall()
-    for i in tickers:
-        ticker = i[0]
-        info = yf.Ticker(ticker)
 
 if __name__ == '__main__':
-    app.debug = True
     app.run()
     
