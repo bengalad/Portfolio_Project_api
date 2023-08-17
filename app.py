@@ -133,6 +133,8 @@ def getinitialvalue():
     products = cursor.fetchall()
     cursor.close()
     return jsonify(products)
+
+@app.route('/products', methods=['GET'])
 def getAllProducts():
     cursor = db.cursor()
     query = """SELECT id, holdingName, dateOfPurchase, priceAtPurchase, currentPrice, qty FROM stocks UNION 
