@@ -10,6 +10,16 @@ db = mysql.connector.connect(
     password="c0nygre",
     database="portfolio"
 )
+    
+@app.route('/products', methods=['GET'])
+def getAllProducts():
+    cursor = db.cursor()
+    query = """SELECT id, holdingName, dateOfPurchase, priceAtPurchase, currentPrice, qty FROM stocks UNION 
+    SELECT id, holdingName, dateOfPurchase, priceAtPurchase, currentPrice, qty FROM bonds UNION 
+    SELECT id, holdingName, dateOfPurchase, exchAtPurchase*qty AS priceAtPurchase, currentValue, qty FROM cash"""
+    cursor.execute(query)
+    allProducts = cursor.fetchall()
+    return jsonify(allProducts)
 
 @app.route('/products/<string:ticker>', methods=['GET'])
 def get_historical_prices(ticker):
@@ -24,7 +34,7 @@ def get_historical_prices(ticker):
         return hist.to_json()
     else:
         return jsonify({"Error":"Ticker data not found"}), 404
-    
 
 if __name__ == '__main__':
     app.run()
+    
