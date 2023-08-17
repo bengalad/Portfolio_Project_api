@@ -14,22 +14,23 @@ db = mysql.connector.connect(
 # Endpoint to create a new stock
 @app.route('/stocks', methods=['POST'])
 def create_stock():
+    
     id = request.json['id']
     holdingName = request.json['holdingName']
     dateOfPurchase = request.json['dateOfPurchase']
     priceAtPurchase = request.json['priceAtPurchase']
     qty = request.json['qty']
     currentPrice = request.json['currentPrice']
-    parValue = request.json['parValue']     
-    maturityDate = request.json['maturityDate']
+
 
     cursor = db.cursor()
    
-    cursor.execute("INSERT INTO stocks (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice, parValue, maturityDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate))
+    cursor.execute("INSERT INTO stocks (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice) VALUES (%s, %s, %s, %s, %s, %s)",
+                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice))
+    
     db.commit()
     cursor.close()
-    return jsonify({'message': 'Bond added successfully'})
+    return jsonify({'message': 'Stock added successfully'})
 
 
 # Endpoint to create a new bond
@@ -41,11 +42,14 @@ def create_bond():
     priceAtPurchase = request.json['priceAtPurchase']
     qty = request.json['qty']
     currentPrice = request.json['currentPrice']
+    parValue = request.json['parValue']     
+    maturityDate = request.json['maturityDate']
 
     cursor = db.cursor()
    
-    cursor.execute("INSERT INTO bonds (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice) VALUES (%s, %s, %s, %s, %s, %s)",
-                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice))
+    cursor.execute("INSERT INTO bonds (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice, parValue, maturityDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate))
+   
     db.commit()
     cursor.close()
     return jsonify({'message': 'Bond added successfully'})
@@ -62,7 +66,6 @@ def create_cash():
     exchCurrent = request.json['exchCurrent']
     currentValue = request.json['currentValue']
     
-
     cursor = db.cursor()
    
     cursor.execute("INSERT INTO cash (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue) VALUES (%s, %s, %s, %s, %s, %s, %s)",
@@ -136,6 +139,80 @@ def refreshData():
     for i in tickers:
         ticker = i[0]
         info = yf.Ticker(ticker)
+        
+        
+        
+# Endpoint to update an existing bond
+@app.route('/bonds/<id>', methods=['PUT'])
+def update_bond(id):
+    
+    id = request.json['id']
+    holdingName = request.json['holdingName']
+    dateOfPurchase = request.json['dateOfPurchase']
+    priceAtPurchase = request.json['priceAtPurchase']
+    qty = request.json['qty']
+    currentPrice = request.json['currentPrice']
+    parValue = request.json['parValue']     
+    maturityDate = request.json['maturityDate']
+
+    cursor = db.cursor()
+   
+    cursor.execute("UPDATE bonds SET id= %s, holdingName= %s, dateOfPurchase= %s, priceAtPurchase= %s, qty= %s, CurrentPrice= %s, parValue= %s, maturityDate= %s WHERE id = %s",
+                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate, id))
+   
+    db.commit()
+    cursor.close()
+    return jsonify({'message': 'Bond updated successfully'})
+
+
+# Endpoint to update an existing stock
+@app.route('/stocks/<id>', methods=['PUT'])
+def update_stocks(id):
+    
+    id = request.json['id']
+    holdingName = request.json['holdingName']
+    dateOfPurchase = request.json['dateOfPurchase']
+    priceAtPurchase = request.json['priceAtPurchase']
+    qty = request.json['qty']
+    currentPrice = request.json['currentPrice']
+    cursor = db.cursor()
+   
+   
+   
+    cursor.execute("UPDATE stocks SET id= %s, holdingName= %s, dateOfPurchase= %s, priceAtPurchase= %s, qty= %s, CurrentPrice= %s WHERE id = %s",
+                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, id))
+    
+
+    db.commit()
+    cursor.close()
+    return jsonify({'message': 'Stock updated successfully'})
+
+
+
+# Endpoint to update an existing stock
+@app.route('/cash/<id>', methods=['PUT'])
+def update_cash(id):
+    
+    id = request.json['id']
+    holdingName = request.json['holdingName']
+    dateOfPurchase = request.json['dateOfPurchase']
+    exchAtPurchase = request.json['exchAtPurchase']
+    qty = request.json['qty']
+    exchCurrent = request.json['exchCurrent']
+    currentValue = request.json['currentValue']
+    
+
+    cursor = db.cursor()
+   
+    cursor.execute("UPDATE cash SET id= %s, holdingName= %s, dateOfPurchase= %s, exchAtPurchase= %s, qty= %s, exchCurrent= %s, currentValue= %s WHERE id = %s",
+                   (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, id))
+    
+
+    db.commit()
+    cursor.close()
+    return jsonify({'message': 'Cash updated successfully'})
+
+
 
 if __name__ == '__main__':
     app.debug = True
