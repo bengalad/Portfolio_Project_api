@@ -9,6 +9,8 @@ db = mysql.connector.connect(
     database="portfolio"
 )
 
+# Gets a table of all stocks, bonds and cash showing ID, Name, Date of purchase, 
+# price at purchase, current value and quantity 
 @app.route('/products', methods=['GET'])
 def getAllProducts():
     cursor = db.cursor()
@@ -19,6 +21,3 @@ def getAllProducts():
     allProducts = cursor.fetchall()
     return jsonify(allProducts)
 
-if __name__ = '__main__':
-    app.run()
-    
