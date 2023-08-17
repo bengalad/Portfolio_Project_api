@@ -137,6 +137,36 @@ def refreshData():
         ticker = i[0]
         info = yf.Ticker(ticker)
 
+@app.route('/products/stocks/<int:item_id>', methods=['DELETE'])
+def delete_stocks(item_id):
+    
+    cursor = db.cursor(buffered=True)
+    cursor.execute("DELETE FROM stocks WHERE id=%s",
+                   (item_id,))
+    db.commit()
+    cursor.close()
+    return jsonify({"Message":"Stocks item deleted successfully"})
+
+@app.route('/products/bonds/<int:item_id>', methods=['DELETE'])
+def delete_bonds(item_id):
+    
+    cursor = db.cursor(buffered=True)
+    cursor.execute("DELETE FROM bonds WHERE id=%s",
+                   (item_id,))
+    db.commit()
+    cursor.close()
+    return jsonify({"Message":"Bonds item deleted successfully"})
+
+@app.route('/products/cash/<int:item_id>', methods=['DELETE'])
+def delete_cash(item_id):
+    
+    cursor = db.cursor(buffered=True)
+    cursor.execute("DELETE FROM cash WHERE id=%s",
+                   (item_id,))
+    db.commit()
+    cursor.close()
+    return jsonify({"Message":"Cash item deleted successfully"})
+
 if __name__ == '__main__':
     app.debug = True
     app.run()
