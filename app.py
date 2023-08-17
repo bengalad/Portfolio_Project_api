@@ -10,6 +10,7 @@ db = mysql.connector.connect(
     password="c0nygre",
     database="portfolio"
 )
+<<<<<<< HEAD
 
 # Endpoint to create a new stock
 @app.route('/stocks', methods=['POST'])
@@ -74,6 +75,8 @@ def create_cash():
     cursor.close()
     return jsonify({'message': 'Cash added successfully'})
 
+=======
+>>>>>>> 2b4b8ca2d17545bbaced23f58263657bdc7545c0
     
 @app.route('/products/totalvalue', methods=['GET'])
 def gettotalvalue():
@@ -90,9 +93,39 @@ def gettotalvalue():
     return jsonify(products)
 
 
+@app.route('/products/totalstocks', methods=['GET'])
+def gettotalstocks():
+    # Calculates the current total value of all stocks
+    cursor = db.cursor()
+    cursor.execute('''SELECT SUM(qty*currentPrice) as totalStocks FROM stocks''')
+    products = cursor.fetchall()
+    cursor.close()
+    return jsonify(products)
+
+
+@app.route('/products/totalbonds', methods=['GET'])
+def gettotalbonds():
+    # Calculates the current total value of all bonds
+    cursor = db.cursor()
+    cursor.execute('''SELECT SUM(qty*currentPrice) as totalBonds FROM bonds''')
+    products = cursor.fetchall()
+    cursor.close()
+    return jsonify(products)
+
+
+@app.route('/products/totalcash', methods=['GET'])
+def gettotalcash():
+    # Calculates the current total value of all cash
+    cursor = db.cursor()
+    cursor.execute('''SELECT SUM(qty*currentValue) as totalCash FROM cash''')
+    products = cursor.fetchall()
+    cursor.close()
+    return jsonify(products)
+
+
 @app.route('/products/initialvalue', methods=['GET'])
 def getinitialvalue():
-    # Calculates the current total value of the portfolio
+    # Calculates the initial total value of the portfolio
     cursor = db.cursor()
     cursor.execute('''SELECT SUM(qty*price) as initialValue FROM
                         (SELECT cash.id, cash.qty, cash.exchAtPurchase AS price FROM cash
@@ -103,8 +136,6 @@ def getinitialvalue():
     products = cursor.fetchall()
     cursor.close()
     return jsonify(products)
-
-@app.route('/products', methods=['GET'])
 def getAllProducts():
     cursor = db.cursor()
     query = """SELECT id, holdingName, dateOfPurchase, priceAtPurchase, currentPrice, qty FROM stocks UNION 
@@ -112,7 +143,6 @@ def getAllProducts():
     SELECT id, holdingName, dateOfPurchase, exchAtPurchase*qty AS priceAtPurchase, currentValue, qty FROM cash"""
     cursor.execute(query)
     allProducts = cursor.fetchall()
-    cursor.close()
     return jsonify(allProducts)
 
 @app.route('/products/<string:ticker>', methods=['GET'])
@@ -128,6 +158,7 @@ def get_historical_prices(ticker):
         return hist.to_json()
     else:
         return jsonify({"Error":"Ticker data not found"}), 404
+<<<<<<< HEAD
     
 # [('AMAZ',), ('GOOG',), ('EUR',)]
 @app.route('/refresh', methods=['GET'])
@@ -213,8 +244,9 @@ def update_cash(id):
     return jsonify({'message': 'Cash updated successfully'})
 
 
+=======
+>>>>>>> 2b4b8ca2d17545bbaced23f58263657bdc7545c0
 
 if __name__ == '__main__':
-    app.debug = True
     app.run()
     
