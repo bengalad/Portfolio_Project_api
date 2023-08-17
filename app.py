@@ -26,9 +26,39 @@ def gettotalvalue():
     return jsonify(products)
 
 
+@app.route('/products/totalstocks', methods=['GET'])
+def gettotalstocks():
+    # Calculates the current total value of all stocks
+    cursor = db.cursor()
+    cursor.execute('''SELECT SUM(qty*currentPrice) as totalStocks FROM stocks''')
+    products = cursor.fetchall()
+    cursor.close()
+    return jsonify(products)
+
+
+@app.route('/products/totalbonds', methods=['GET'])
+def gettotalbonds():
+    # Calculates the current total value of all bonds
+    cursor = db.cursor()
+    cursor.execute('''SELECT SUM(qty*currentPrice) as totalBonds FROM bonds''')
+    products = cursor.fetchall()
+    cursor.close()
+    return jsonify(products)
+
+
+@app.route('/products/totalcash', methods=['GET'])
+def gettotalcash():
+    # Calculates the current total value of all cash
+    cursor = db.cursor()
+    cursor.execute('''SELECT SUM(qty*currentValue) as totalCash FROM cash''')
+    products = cursor.fetchall()
+    cursor.close()
+    return jsonify(products)
+
+
 @app.route('/products/initialvalue', methods=['GET'])
 def getinitialvalue():
-    # Calculates the current total value of the portfolio
+    # Calculates the initial total value of the portfolio
     cursor = db.cursor()
     cursor.execute('''SELECT SUM(qty*price) as initialValue FROM
                         (SELECT cash.id, cash.qty, cash.exchAtPurchase AS price FROM cash
