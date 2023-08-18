@@ -22,7 +22,7 @@ def create_stock():
     currentPrice = request.json['currentPrice']
     cursor = db.cursor()
    
-    cursor.execute("INSERT INTO stocks (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice) VALUES (%s, %s, %s, %s, %s, %s, )",
+    cursor.execute("INSERT INTO stocks (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice) VALUES (%s, %s, %s, %s, %s, %s )",
                    (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice))
     db.commit()
     cursor.close()
