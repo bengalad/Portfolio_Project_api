@@ -215,17 +215,6 @@ def get_historical_prices(ticker):
         return hist.to_json()
     else:
         return jsonify({"Error":"Ticker data not found"}), 404
-    
-# [('AMAZ',), ('GOOG',), ('EUR',)]
-@app.route('/refresh', methods=['GET'])
-def refreshData():
-    cursor = db.cursor()
-    query = "SELECT ticker FROM holdings"
-    cursor.execute(query)
-    tickers = cursor.fetchall()
-    for i in tickers:
-        ticker = i[0]
-        info = yf.Ticker(ticker)
 
 @app.route('/products/stocks/<int:item_id>', methods=['DELETE'])
 def delete_stocks(item_id):
