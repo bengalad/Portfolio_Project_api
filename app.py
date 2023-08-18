@@ -1,9 +1,14 @@
 from flask import Flask, jsonify, request
 import mysql.connector
 import yfinance as yf
-import pandas as pd
+from flask_cors import CORS
 
-app = Flask(__name__)
+# Create the application instance and set the static folder so i don't have to put the path to the static folder in the URL
+app = Flask(__name__, static_url_path='/../Portfolio_Project_ui', static_folder='static')
+
+# add cors support so i can use this with a frontend
+CORS(app, crossorigin=True, resources="*")
+
 db = mysql.connector.connect(
     host="localhost",
     user="root",
