@@ -262,7 +262,7 @@ def update_cash(id):
     return jsonify({'message': 'Cash updated successfully'})
 
 
-@app.route('/refresh', methods=['GET'])
+@app.route('/refresh/stocks', methods=['GET'])
 def refreshData():
     # get tickers from the holdings table 
     cursor = db.cursor()
@@ -300,6 +300,12 @@ def refreshData():
             cursor.execute(cashQuery, (price, product[0]))
             db.commit()
         cursor.close()
+    return jsonify("Page refreshed successfully")
+ 
+@app.route('/refresh/bonds', methods=['GET'])
+def refreshBonds():
+    info = inv.get_bond_information("Argentina 1Y", True)
+    return info
             
 if __name__ == '__main__':
     app.debug = True
