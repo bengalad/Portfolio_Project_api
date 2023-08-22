@@ -1,6 +1,10 @@
 from flask import Flask, jsonify, request
+import numpy as np
+import numpy_financial as nf
 import mysql.connector
 import yfinance as yf
+from datetime import date
+from dateutil import relativedelta
 from flask_cors import CORS
 
 # Create the application instance and set the static folder so i don't have to put the path to the static folder in the URL
@@ -25,10 +29,11 @@ def create_stock():
     priceAtPurchase = request.json['priceAtPurchase']
     qty = request.json['qty']
     currentPrice = request.json['currentPrice']
+    ticker = request.json['ticker']
     cursor = db.cursor()
    
-    cursor.execute("INSERT INTO stocks (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice) VALUES (%s, %s, %s, %s, %s, %s )",
-                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice))
+    cursor.execute("INSERT INTO stocks (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, ticker) VALUES (%s, %s, %s, %s, %s, %s, %s )",
+                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, ticker))
     db.commit()
     cursor.close()
     return jsonify({'message': 'Stock added successfully'})
@@ -45,11 +50,13 @@ def create_bond():
     currentPrice = request.json['currentPrice']
     parValue = request.json['parValue']     
     maturityDate = request.json['maturityDate']
+    coupon = request.json['coupon']
+    discountRate = request.json['discountRate']
 
     cursor = db.cursor()
    
-    cursor.execute("INSERT INTO bonds (id, holdingName, dateOfPurchase, priceAtPurchase, qty, CurrentPrice, parValue, maturityDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate))
+    cursor.execute("INSERT INTO bonds (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate, coupon, discountRate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate, coupon, discountRate))
    
     db.commit()
     cursor.close()
@@ -66,11 +73,12 @@ def create_cash():
     qty = request.json['qty']
     exchCurrent = request.json['exchCurrent']
     currentValue = request.json['currentValue']
+    ticker = request.json['ticker']
     
     cursor = db.cursor()
    
-    cursor.execute("INSERT INTO cash (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                   (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue))
+    cursor.execute("INSERT INTO cash (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, ticker) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                   (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, ticker))
     db.commit()
     cursor.close()
     return jsonify({'message': 'Cash added successfully'})
@@ -203,11 +211,13 @@ def update_bond(id):
     currentPrice = request.json['currentPrice']
     parValue = request.json['parValue']     
     maturityDate = request.json['maturityDate']
+    coupon = request.json['coupon']
+    discountRate = request.json['discountRate']
 
     cursor = db.cursor()
    
-    cursor.execute("UPDATE bonds SET id= %s, holdingName= %s, dateOfPurchase= %s, priceAtPurchase= %s, qty= %s, CurrentPrice= %s, parValue= %s, maturityDate= %s WHERE id = %s",
-                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate, id))
+    cursor.execute("UPDATE bonds SET id= %s, holdingName= %s, dateOfPurchase= %s, priceAtPurchase= %s, qty= %s, CurrentPrice= %s, parValue= %s, maturityDate= %s, coupon=%s, discountRate=%s WHERE id = %s",
+                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate,coupon, discountRate, id))
    
     db.commit()
     cursor.close()
@@ -224,12 +234,13 @@ def update_stocks(id):
     priceAtPurchase = request.json['priceAtPurchase']
     qty = request.json['qty']
     currentPrice = request.json['currentPrice']
+    ticker = request.json['ticker']
     cursor = db.cursor()
    
    
    
-    cursor.execute("UPDATE stocks SET id= %s, holdingName= %s, dateOfPurchase= %s, priceAtPurchase= %s, qty= %s, CurrentPrice= %s WHERE id = %s",
-                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, id))
+    cursor.execute("UPDATE stocks SET id= %s, holdingName= %s, dateOfPurchase= %s, priceAtPurchase= %s, qty= %s, currentPrice= %s, ticker=%s WHERE id = %s",
+                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, ticker, id))
     
 
     db.commit()
@@ -249,12 +260,13 @@ def update_cash(id):
     qty = request.json['qty']
     exchCurrent = request.json['exchCurrent']
     currentValue = request.json['currentValue']
+    ticker = request.json['ticker']
     
 
     cursor = db.cursor()
    
-    cursor.execute("UPDATE cash SET id= %s, holdingName= %s, dateOfPurchase= %s, exchAtPurchase= %s, qty= %s, exchCurrent= %s, currentValue= %s WHERE id = %s",
-                   (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, id))
+    cursor.execute("UPDATE cash SET id= %s, holdingName= %s, dateOfPurchase= %s, exchAtPurchase= %s, qty= %s, exchCurrent= %s, currentValue= %s, ticker=%s WHERE id = %s",
+                   (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, ticker, id))
     
 
     db.commit()
@@ -263,49 +275,85 @@ def update_cash(id):
 
 
 @app.route('/refresh/stocks', methods=['GET'])
-def refreshData():
+def refreshStocks():
     # get tickers from the holdings table 
     cursor = db.cursor()
-    query = "SELECT ticker FROM holdings"
+    query = "SELECT ticker FROM holdings WHERE holdingType='stock'"
     cursor.execute(query)
     tickers = cursor.fetchall()
     cursor.close()
-    # tickers = ["MSFT"]
     for i in tickers:
-        print("hello")
         # get information for this product from yahoo
         ticker = i[0]
         tick = yf.Ticker(ticker)
         info = tick.info
-        # return jsonify(info)
-        print(info)
         price = info['currentPrice']
-        
         # get the product information from the database using the ticker
         cursor = db.cursor()
         query = "SELECT * FROM holdings WHERE ticker = %s";
         cursor.execute(query, (ticker,))
         product = cursor.fetchall()[0]
         # # updating the price in the specific product table 
-        if product[2] == "stock":
-            stockQuery = "UPDATE stocks SET currentPrice = %s WHERE id = %s"
-            cursor.execute(stockQuery, (price, product[0])) 
-            db.commit()
-        elif product[2] == "bond":
-            bondQuery = "UPDATE bonds SET currentPrice = %s WHERE id = %s"
-            cursor.execute(bondQuery, (price, product[0])) 
-            db.commit()
-        elif product[2] == "cash":
-            cashQuery = "UPDATE cash SET currentValue = %s WHERE id = %s"
-            cursor.execute(cashQuery, (price, product[0]))
-            db.commit()
+        stockQuery = "UPDATE stocks SET currentPrice = %s WHERE id = %s"
+        cursor.execute(stockQuery, (price, product[0])) 
+        db.commit()
         cursor.close()
     return jsonify("Page refreshed successfully")
- 
+
+@app.route('/refresh/cash', methods=['GET'])
+def refreshCash():
+    # get tickers from the holdings table 
+    cursor = db.cursor()
+    query = "SELECT ticker FROM holdings WHERE holdingType='cash'"
+    cursor.execute(query)
+    tickers = cursor.fetchall()
+    cursor.close()
+    for i in tickers:
+        # get information for this product from yahoo
+        ticker = i[0]
+        tick = yf.Ticker(ticker)
+        info = tick.info
+        rate = info['ask']
+        print(rate)
+        # get the product information from the database using the ticker
+        cursor = db.cursor()
+        query = "SELECT * FROM holdings WHERE ticker = %s";
+        cursor.execute(query, (ticker,))
+        product = cursor.fetchall()[0]
+        # # updating the price in the specific product table 
+        cashQuery = "UPDATE cash SET exchCurrent = %s, currentValue=qty*%s WHERE id = %s"
+        cursor.execute(cashQuery, (rate, rate, product[0])) 
+        db.commit()
+        print("yay")
+        cursor.close()
+    return jsonify("Page refreshed successfully")
+
 @app.route('/refresh/bonds', methods=['GET'])
 def refreshBonds():
-    info = inv.get_bond_information("Argentina 1Y", True)
-    return info
+    # Get bonds from table 
+    cursor = db.cursor()
+    query = "SELECT * FROM bonds"
+    cursor.execute(query)
+    bonds = cursor.fetchall()
+    cursor.close()
+    for i in bonds:
+        # store all necessary values for the calculation
+        purchasePrice = i[3]
+        qty = i[4]
+        coupon = i[5]
+        rate = i[6]
+        parValue = i[7]
+        period = relativedelta.relativedelta(i[8], i[2]).years
+        couponPayment = coupon * purchasePrice
+        # calculate bond price using formula found online
+        bondPrice = couponPayment*(1-(1+rate)**(-period))/rate + (parValue/(1+rate)**period)
+        cursor = db.cursor()
+        # update database with the information
+        bondQuery = "UPDATE bonds SET currentPrice = %s WHERE id = %s"
+        cursor.execute(bondQuery, (bondPrice*qty, i[0])) 
+        db.commit()
+        cursor.close()
+    return jsonify("Page refreshed successfully")
             
 if __name__ == '__main__':
     app.debug = True
