@@ -1,34 +1,26 @@
 CREATE DATABASE portfolio;
-
 USE portfolio;
-
-CREATE TABLE holdings
-(
-   id          varchar(11) 	    NOT NULL,
-   holdingName       varchar(40)       NOT NULL,
-   holdingType       varchar(20)       NOT NULL,
-	ticker		varchar(5) 	    NOT NULL,
-   PRIMARY KEY(id)
-);
-
 CREATE TABLE stocks
 (
-   id         varchar(11)           NOT NULL,
+   id         int           NOT NULL	auto_increment,
    holdingName       varchar(40)           NULL,
    dateOfPurchase           date           NULL,
    priceAtPurchase          decimal(10,2)               NULL,
    qty        decimal(10,2)           NULL ,
    currentPrice  decimal(10,2) 			NULL,
+   ticker varchar(20) NOT NULL,
    PRIMARY KEY(id)
 );
 
 CREATE TABLE bonds
 (
-   id         varchar(11)           NOT NULL,
+   id         int           NOT NULL auto_increment,
    holdingName       varchar(40)           NULL,
    dateOfPurchase           date           NULL,
    priceAtPurchase          decimal(10,2)               NULL,
    qty        decimal(10,2)           NULL ,
+   coupon decimal(10,2) NULL,
+   discountRate decimal(10,2) NULL,
    parValue          decimal(10,2)               NULL,
    maturityDate           date           NULL,
    currentPrice  decimal(10,2) 			NULL,
@@ -37,55 +29,34 @@ CREATE TABLE bonds
 
 CREATE TABLE cash
 (
-   id         varchar(11)           NOT NULL,
+   id         int           NOT NULL auto_increment,
    holdingName       varchar(40)           NULL,
    dateOfPurchase           date           NULL,
    exchAtPurchase          decimal(10,2)               NULL,
    exchCurrent          decimal(10,2)               NULL,
    qty        decimal(10,2)           NULL ,
    currentValue  decimal(10,2) 			NULL,
+   ticker varchar(20) NOT NULL,
    PRIMARY KEY(id)
 );
 
 
-insert stocks
-   values('1', 'Stock1', '2023-10-01', 10.99,
-   10, 12.99);
-   insert stocks
-   values('2', 'Stock2', '2023-10-11', 9.99,
-   6, 10.99);
-   insert stocks
-   values('3', 'Stock3', '2023-10-05', 15.99,
-   50, 11.99);
+INSERT INTO stocks (holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, ticker)
+   values('Apple', '2023-07-31', 190, 5, 12.99, 'AAPL');
+   insert stocks (holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, ticker)
+   values('Crocs', '2020-01-06', 43, 10, 44, 'CROX');
+   insert stocks (holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, ticker)
+   values('NVIDIA', '2023-10-10', 112, 2, 100, 'NVDA');
 
-insert bonds
-   values('4', 'Bond1', '2023-10-01', 10.99,
-   10, 100, '2025-10-01', 10.99);
-insert bonds
-   values('5', 'Bond2', '2023-8-11', 3.99,
-   8, 300, '2024-10-01', 2.99);
-insert bonds
-   values('6', 'Bond3', '2023-8-05', 7.99,
-   100, 500, '2024-10-01', 6.99);
+insert into bonds (holdingName, dateOfPurchase, priceAtPurchase, qty, coupon,
+   discountRate, parValue, maturityDate)          
+   values('Ford Motors', '2022-08-08', 105, 1, 6.24, 0.05, 1000, '2028-10-01');
+insert into bonds (holdingName, dateOfPurchase, priceAtPurchase, qty, coupon,
+   discountRate, parValue, maturityDate)
+   values('UK GILT', '2023-08-21', 92.25,
+   5, 58, 0.052, 100, '2025-08-21');
    
-insert cash
-   values('7', 'Cash1', '2023-10-01', 10.99,
-	1, 10, 10.99);
-insert cash
-   values('8', 'Cash2', '2023-8-11', 3.99,
-   1.2, 100, 4.79);
-insert cash
-   values('9', 'Cash3', '2023-8-05', 7.99,
-   1.4, 100, 11.19);
-   
-   
-   
-insert holdings
-   values('9', 'Cash3', 'cash', 'EUR');
-insert holdings
-   values('1', 'Stock1', 'stock', 'AMAZ');
-insert holdings
-   values('4', 'Bond1', 'bond', 'GOOG');
-   
-
-
+insert into cash (holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, ticker)
+   values('GPB', '2022-11-11', 1.18, 2, 100, 140, 'GBPUSD=X');
+insert cash (holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, ticker)
+   values('Euros', '2018-10-01', 1.13, 1.2, 200, 190, 'EURUSD=X');
