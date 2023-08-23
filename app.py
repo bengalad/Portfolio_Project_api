@@ -335,8 +335,10 @@ def refreshBonds():
     cursor.close()
     for i in bonds:
         # store all necessary values for the calculation
-        purchasePrice = i[3]
+        purchasePrice = float(i[3])
+        print(type(purchasePrice))
         randomChange = random.randrange(90,100)/100
+        print(type(randomChange))
         bondPrice = purchasePrice*randomChange
         cursor = db.cursor()
         # update database with the information
