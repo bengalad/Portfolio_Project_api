@@ -346,7 +346,7 @@ def refreshBonds():
         cursor = db.cursor()
         # update database with the information
         bondQuery = "UPDATE bonds SET currentPrice = %s WHERE id = %s"
-        cursor.execute(bondQuery, (bondPrice*qty, i[0])) 
+        cursor.execute(bondQuery, (bondPrice, i[0])) 
         db.commit()
         cursor.close()
     return jsonify("Page refreshed successfully")
