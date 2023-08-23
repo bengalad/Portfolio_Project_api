@@ -335,14 +335,8 @@ def refreshBonds():
     for i in bonds:
         # store all necessary values for the calculation
         purchasePrice = i[3]
-        qty = i[4]
-        coupon = i[5]
-        rate = i[6]
-        parValue = i[7]
-        period = relativedelta.relativedelta(i[8], i[2]).years
-        couponPayment = coupon * purchasePrice
-        # calculate bond price using formula found online
-        bondPrice = couponPayment*(1-(1+rate)**(-period))/rate + (parValue/(1+rate)**period)
+        randomChange = randrange(90,100)/100
+        bondPrice = purchasePrice*randomChange
         cursor = db.cursor()
         # update database with the information
         bondQuery = "UPDATE bonds SET currentPrice = %s WHERE id = %s"
