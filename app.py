@@ -335,7 +335,7 @@ def refreshBonds():
     for i in bonds:
         # store all necessary values for the calculation
         purchasePrice = i[3]
-        randomChange = randrange(90,100)/100
+        randomChange = random.randrange(90,100)/100
         bondPrice = purchasePrice*randomChange
         cursor = db.cursor()
         # update database with the information
