@@ -312,7 +312,6 @@ def refreshCash():
         tick = yf.Ticker(ticker)
         info = tick.info
         rate = info['ask']
-        print(rate)
         # get the product information from the database using the ticker
         cursor = db.cursor()
         query = "SELECT * FROM cash WHERE ticker = %s";
@@ -322,7 +321,6 @@ def refreshCash():
         cashQuery = "UPDATE cash SET exchCurrent = %s, currentValue=qty*%s WHERE id = %s"
         cursor.execute(cashQuery, (rate, rate, product[0])) 
         db.commit()
-        print("yay")
         cursor.close()
     return jsonify("Page refreshed successfully")
 
