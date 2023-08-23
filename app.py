@@ -87,7 +87,7 @@ def gettotalvalue():
     # Calculates the current total value of the portfolio
     cursor = db.cursor()
     cursor.execute('''SELECT SUM(qty*price) as totalValue FROM
-                        (SELECT cash.id, cash.qty, cash.currentValue AS price FROM cash
+                        (SELECT cash.id, cash.qty, cash.exchCurrent AS price FROM cash
                         UNION
                         SELECT bonds.id, bonds.qty, bonds.currentPrice AS price FROM bonds
                         UNION
@@ -121,7 +121,7 @@ def gettotalbonds():
 def gettotalcash():
     # Calculates the current total value of all cash
     cursor = db.cursor()
-    cursor.execute('''SELECT SUM(qty*currentValue) as totalCash FROM cash''')
+    cursor.execute('''SELECT SUM(qty*exchCurrent) as totalCash FROM cash''')
     products = cursor.fetchall()
     cursor.close()
     return jsonify(products)
