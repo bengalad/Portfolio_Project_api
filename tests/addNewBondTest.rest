@@ -9,7 +9,8 @@ POST http://localhost:5000/bonds
        "qty": 10,
        "currentPrice": 10.99,
        "parValue": 10.99,
-       "currentPrice": 100
+       "coupon": 0.7,
+       "discountRate": 0.05
 
        
    }

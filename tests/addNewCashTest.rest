@@ -8,7 +8,8 @@ POST http://localhost:5000/cash
        "exchAtPurchase":9.99,
        "qty": 10,
        "exchCurrent": 10.99,
-       "currentValue": 10
+       "currentValue": 10,
+       "ticker":"EURUSD=X"
 
        
    }
