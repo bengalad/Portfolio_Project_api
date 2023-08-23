@@ -57,6 +57,6 @@ insert into bonds (holdingName, dateOfPurchase, priceAtPurchase, qty, coupon,
    5, 58, 0.052, 100, '2025-08-21');
    
 insert into cash (holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, ticker)
-   values('GPB', '2022-11-11', 1.18, 2, 100, 140, 'GBPUSD=X');
+   values('GBP', '2022-11-11', 1.18, 2, 100, 140, 'GBPUSD=X');
 insert into cash (holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, ticker)
    values('Euros', '2018-10-01', 1.13, 1.2, 200, 190, 'EURUSD=X');
