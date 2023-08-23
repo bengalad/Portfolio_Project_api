@@ -1,6 +1,4 @@
 from flask import Flask, jsonify, request
-import numpy as np
-import numpy_financial as nf
 import mysql.connector
 import yfinance as yf
 from datetime import date
@@ -276,9 +274,9 @@ def update_cash(id):
 
 @app.route('/refresh/stocks', methods=['GET'])
 def refreshStocks():
-    # get tickers from the holdings table 
+    # get tickers from the stocks table 
     cursor = db.cursor()
-    query = "SELECT ticker FROM holdings WHERE holdingType='stock'"
+    query = "SELECT ticker FROM stocks"
     cursor.execute(query)
     tickers = cursor.fetchall()
     cursor.close()
@@ -290,7 +288,7 @@ def refreshStocks():
         price = info['currentPrice']
         # get the product information from the database using the ticker
         cursor = db.cursor()
-        query = "SELECT * FROM holdings WHERE ticker = %s";
+        query = "SELECT * FROM stocks WHERE ticker = %s"
         cursor.execute(query, (ticker,))
         product = cursor.fetchall()[0]
         # # updating the price in the specific product table 
@@ -302,9 +300,9 @@ def refreshStocks():
 
 @app.route('/refresh/cash', methods=['GET'])
 def refreshCash():
-    # get tickers from the holdings table 
+    # get tickers from the cash table 
     cursor = db.cursor()
-    query = "SELECT ticker FROM holdings WHERE holdingType='cash'"
+    query = "SELECT ticker FROM cash"
     cursor.execute(query)
     tickers = cursor.fetchall()
     cursor.close()
@@ -317,7 +315,7 @@ def refreshCash():
         print(rate)
         # get the product information from the database using the ticker
         cursor = db.cursor()
-        query = "SELECT * FROM holdings WHERE ticker = %s";
+        query = "SELECT * FROM cash WHERE ticker = %s";
         cursor.execute(query, (ticker,))
         product = cursor.fetchall()[0]
         # # updating the price in the specific product table 
