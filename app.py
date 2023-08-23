@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 import mysql.connector
+import random
 import yfinance as yf
 from datetime import date
 from dateutil import relativedelta
