@@ -22,7 +22,6 @@ db = mysql.connector.connect(
 @app.route('/stocks', methods=['POST'])
 def create_stock():
     db.reconnect(attempts=1, delay=0)
-    id = request.json['id']
     holdingName = request.json['holdingName']
     dateOfPurchase = request.json['dateOfPurchase']
     priceAtPurchase = request.json['priceAtPurchase']
@@ -31,8 +30,8 @@ def create_stock():
     ticker = request.json['ticker']
     cursor = db.cursor()
    
-    cursor.execute("INSERT INTO stocks (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, ticker) VALUES (%s, %s, %s, %s, %s, %s, %s )",
-                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, ticker))
+    cursor.execute("INSERT INTO stocks (holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, ticker) VALUES (%s, %s, %s, %s, %s, %s )",
+                   (holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, ticker))
     db.commit()
     cursor.close()
     return jsonify({'message': 'Stock added successfully'})
@@ -42,7 +41,6 @@ def create_stock():
 @app.route('/bonds', methods=['POST'])
 def create_bond():
     db.reconnect(attempts=1, delay=0)
-    id = request.json['id']
     holdingName = request.json['holdingName']
     dateOfPurchase = request.json['dateOfPurchase']
     priceAtPurchase = request.json['priceAtPurchase']
@@ -55,8 +53,8 @@ def create_bond():
 
     cursor = db.cursor()
    
-    cursor.execute("INSERT INTO bonds (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate, coupon, discountRate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                   (id, holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate, coupon, discountRate))
+    cursor.execute("INSERT INTO bonds (holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate, coupon, discountRate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                   (holdingName, dateOfPurchase, priceAtPurchase, qty, currentPrice, parValue, maturityDate, coupon, discountRate))
    
     db.commit()
     cursor.close()
@@ -67,7 +65,6 @@ def create_bond():
 @app.route('/cash', methods=['POST'])
 def create_cash():
     db.reconnect(attempts=1, delay=0)
-    id = request.json['id']
     holdingName = request.json['holdingName']
     dateOfPurchase = request.json['dateOfPurchase']
     exchAtPurchase = request.json['exchAtPurchase']
@@ -78,8 +75,8 @@ def create_cash():
     
     cursor = db.cursor()
    
-    cursor.execute("INSERT INTO cash (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, ticker) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                   (id, holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, ticker))
+    cursor.execute("INSERT INTO cash (holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, ticker) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                   (holdingName, dateOfPurchase, exchAtPurchase, exchCurrent, qty, currentValue, ticker))
     db.commit()
     cursor.close()
     return jsonify({'message': 'Cash added successfully'})
