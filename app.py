@@ -172,32 +172,32 @@ def get_historical_prices(ticker):
     else:
         return jsonify({"Error":"Ticker data not found"}), 404
 
-@app.route('/products/stocks/<int:item_id>', methods=['DELETE'])
-def delete_stocks(item_id):
+@app.route('/products/stocks/<string:holdingName>', methods=['DELETE'])
+def delete_stocks(holdingName):
     db.reconnect(attempts=1, delay=0)
     cursor = db.cursor(buffered=True)
-    cursor.execute("DELETE FROM stocks WHERE id=%s",
-                   (item_id,))
+    cursor.execute("DELETE FROM stocks WHERE holdingName=%s",
+                   (holdingName,))
     db.commit()
     cursor.close()
     return jsonify({"Message":"Stocks item deleted successfully"})
 
-@app.route('/products/bonds/<int:item_id>', methods=['DELETE'])
-def delete_bonds(item_id):
+@app.route('/products/bonds/<string:holdingName>', methods=['DELETE'])
+def delete_bonds(holdingName):
     db.reconnect(attempts=1, delay=0)
     cursor = db.cursor(buffered=True)
-    cursor.execute("DELETE FROM bonds WHERE id=%s",
-                   (item_id,))
+    cursor.execute("DELETE FROM bonds WHERE holdingName=%s",
+                   (holdingName,))
     db.commit()
     cursor.close()
     return jsonify({"Message":"Bonds item deleted successfully"})
 
-@app.route('/products/cash/<int:item_id>', methods=['DELETE'])
-def delete_cash(item_id):
+@app.route('/products/cash/<string:holdingName>', methods=['DELETE'])
+def delete_cash(holdingName):
     db.reconnect(attempts=1, delay=0)
     cursor = db.cursor(buffered=True)
-    cursor.execute("DELETE FROM cash WHERE id=%s",
-                   (item_id,))
+    cursor.execute("DELETE FROM cash WHERE holdingName=%s",
+                   (holdingName,))
     db.commit()
     cursor.close()
     return jsonify({"Message":"Cash item deleted successfully"})

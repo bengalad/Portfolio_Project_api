@@ -1,5 +1,6 @@
 CREATE DATABASE portfolio;
 USE portfolio;
+SET SQL_SAFE_UPDATES = 0;
 CREATE TABLE stocks
 (
    id         int           NOT NULL	auto_increment,

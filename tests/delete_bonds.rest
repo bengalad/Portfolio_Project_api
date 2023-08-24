@@ -1,1 +1,1 @@
-DELETE http://localhost:5000/products/bonds/4
+DELETE http://localhost:5000/products/bonds/UK GILT
