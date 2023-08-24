@@ -1,8 +1,7 @@
 POST http://localhost:5000/cash
    Content-Type: application/json
 
-   {
-       "id": "22", 
+   { 
         "holdingName": "New Cash",
        "dateOfPurchase": "2023-01-04",
        "exchAtPurchase":9.99,
